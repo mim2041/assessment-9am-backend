@@ -1,14 +1,14 @@
-require('dotenv').config();
-const express = require('express');
-const helmet = require('helmet');
-const morgan = require('morgan');
-const compression = require('compression');
-const rateLimit = require('express-rate-limit');
-const connectDB = require('./config/database');
-const corsMiddleware = require('./config/cors');
-const errorHandler = require('./middleware/error.middleware');
-const authRoutes = require('./routes/auth.routes');
-const userRoutes = require('./routes/user.routes');
+require("dotenv").config();
+const express = require("express");
+const helmet = require("helmet");
+const morgan = require("morgan");
+const compression = require("compression");
+const rateLimit = require("express-rate-limit");
+const connectDB = require("./config/database");
+const corsMiddleware = require("./config/cors");
+const errorHandler = require("./middleware/error.middleware");
+const authRoutes = require("./routes/auth.route");
+const userRoutes = require("./routes/user.route");
 
 // Connect to database
 connectDB();
@@ -23,28 +23,28 @@ app.use(corsMiddleware);
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100, // limit each IP to 100 requests per windowMs
-  message: 'Too many requests from this IP, please try again later.'
+  message: "Too many requests from this IP, please try again later.",
 });
 
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 5, // limit auth attempts
-  message: 'Too many authentication attempts, please try again later.'
+  message: "Too many authentication attempts, please try again later.",
 });
 
 // Middleware
 app.use(compression());
-app.use(morgan('combined'));
+app.use(morgan("combined"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
-app.use('/api/auth', authLimiter, authRoutes);
-app.use('/api/user', limiter, userRoutes);
+app.use("/api/auth", authLimiter, authRoutes);
+app.use("/api/user", limiter, userRoutes);
 
 // Health check
-app.get('/health', (req, res) => {
-  res.json({ status: 'OK', timestamp: new Date().toISOString() });
+app.get("/health", (req, res) => {
+  res.json({ status: "OK", timestamp: new Date().toISOString() });
 });
 
 // Error handling
